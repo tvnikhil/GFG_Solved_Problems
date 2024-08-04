@@ -30,36 +30,21 @@ class GFG {
     }
 }
 // } Driver Code Ends
-
-
-class Pair {
-    public int node, parent;
-    public Pair (int node, int parent) {
-        this.node = node;
-        this.parent = parent;
-    }
-}
-
 class Solution {
     // Function to detect cycle in an undirected graph.
-    static boolean hasCycle(int src, ArrayList<ArrayList<Integer>> adj, boolean[] visited) {
-        Queue<Pair> que = new LinkedList<>();
-        que.offer(new Pair(src, -1));
+    static boolean hasCycle(int src, int par, ArrayList<ArrayList<Integer>> adj, boolean[] visited) {
+        if (visited[src] == true)
+            return true;
         visited[src] = true;
-        while (!que.isEmpty()) {
-            int size = que.size();
-            for (int i = 0; i < size; i++) {
-                Pair p = que.poll();
-                int node = p.node, parent = p.parent;
-                ArrayList<Integer> children = adj.get(node);
-                for (int child = 0; child < children.size(); child++) {
-                    if (parent != children.get(child)) {
-                        if (visited[children.get(child)])
-                            return true;
-                        que.offer(new Pair(children.get(child), node));
-                        visited[children.get(child)] = true;
-                    }
-                }
+        ArrayList<Integer> neighbors = adj.get(src);
+        // for (int i = 0; i < neighbors.size(); i++)
+        //     System.out.print(neighbors.get(i) + " ");
+        // System.out.println();
+        for (int i = 0; i < neighbors.size(); i++) {
+            //System.out.println(neighbors.get(i));
+            if (src != neighbors.get(i) && par != neighbors.get(i)
+                && hasCycle(neighbors.get(i), src, adj, visited)) {
+                return true;
             }
         }
         return false;
@@ -69,9 +54,11 @@ class Solution {
         // Code here
         boolean[] visited = new boolean[V];
         for (int i = 0; i < V; i++) {
-            if (visited[i] == false)
-                if (hasCycle(i, adj, visited))
+            if (visited[i] == false) {
+                if (hasCycle(i, -1, adj, visited)) {
                     return true;
+                }
+            }
         }
         return false;
     }
